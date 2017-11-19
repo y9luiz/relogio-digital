@@ -11,11 +11,14 @@ entity modo_selecao is
 
 		
 		mode_test: out std_logic_vector (1 downto 0);
-		
-		disp_h: out std_logic_vector (3 downto 0);
-		disp_m: out std_logic_vector (5 downto 0);
-		disp_s: out std_logic_vector (5 downto 0)
-		
+		disp_h1: out std_logic_vector (6 downto 0);
+		disp_h2: out std_logic_vector (6 downto 0);
+
+		disp_m1: out std_logic_vector (6 downto 0);
+		disp_m2: out std_logic_vector (6 downto 0);
+
+		disp_s1: out std_logic_vector (6 downto 0);
+		disp_s2: out std_logic_vector (6 downto 0)
 	
 	);
 end modo_selecao;
@@ -30,10 +33,14 @@ architecture modo_selecao of modo_selecao is
 			STR: in std_logic;
 			clock: in std_logic;
 		
-		
-			disp_h: out std_logic_vector (3 downto 0);
-			disp_m: out std_logic_vector (5 downto 0);
-			disp_s: out std_logic_vector (5 downto 0)
+		disp_h1: out std_logic_vector (6 downto 0);
+		disp_h2: out std_logic_vector (6 downto 0);
+
+		disp_m1: out std_logic_vector (6 downto 0);
+		disp_m2: out std_logic_vector (6 downto 0);
+
+		disp_s1: out std_logic_vector (6 downto 0);
+		disp_s2: out std_logic_vector (6 downto 0)
 		
 		
 		);
@@ -51,18 +58,30 @@ architecture modo_selecao of modo_selecao is
 			);
 			
 		end component;
-
+	
+	
+	component div_freq is 
+		port(
+			 clock_in:	 in std_logic;
+			cont: in std_logic_vector (25 downto 0);
+			clock_out: out std_logic
+		
+		);
+	end component;
 
 signal mode_index: std_logic_vector (1 downto 0):="00";
 signal aux: std_logic_vector (1 downto 0);
 signal set_rel: std_logic_vector (1 downto 0):= "00";
 signal STR_aux: std_logic:=STR ;
 signal STR_aux_bar: std_logic:= not STR ;
+signal cont_clocks :std_logic_vector (25 downto 0);
+signal div_clock: std_logic;
 
 --signal 
 	begin
-			FF1: FF_D port map ('1',STR,STR_aux,STR_aux_bar);
-			relo: relogio port map (conf,set_rel,mode_index,STR_aux,clock,disp_h,disp_m,disp_s);
+			divisor_freq: div_freq port map(clock,cont_clocks,div_clock);
+
+			relo: relogio port map (conf,set_rel,mode_index,STR_aux,div_clock,disp_h1,disp_h2,disp_m1,disp_m2,disp_s1,disp_s2);
 			
 		process(change_mode)
 			begin
